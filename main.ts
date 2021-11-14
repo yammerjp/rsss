@@ -1,5 +1,4 @@
-import { serve } from "https://deno.land/std@0.114.0/http/server.ts";
-
+import { serve } from './deps.ts'
 const addr = ":8080";
 
 const handler = async (request: Request): Promise<Response> => {
