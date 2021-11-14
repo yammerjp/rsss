@@ -1,5 +1,7 @@
 import { serve } from './deps.ts'
-const addr = ":8080";
+import { env } from "./deps.ts"
+
+const addr = `:${env.get("PORT", "8080")}`;
 
 const handler = async (request: Request): Promise<Response> => {
   const body = await fetchRSS();
@@ -14,5 +16,5 @@ const fetchRSS = async (): Promise<string> => {
   return response.text();
 };
 
-console.log(`HTTP webserver running. Access it at: http://localhost:8080/`);
+console.log(`HTTP webserver running. Access it at: http://localhost${addr}/`);
 await serve(handler, { addr });
