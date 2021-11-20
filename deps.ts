@@ -7,3 +7,4 @@ export { env }
 export { parse, stringify } from 'https://deno.land/x/xml/mod.ts';
 
 export { parseFeed } from "https://deno.land/x/rss@0.5.3/mod.ts";
+export type { Feed } from "https://deno.land/x/rss@0.5.3/mod.ts";
