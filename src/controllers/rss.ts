@@ -5,7 +5,7 @@ const handler: RequestHandler = async (request: Request) => {
   const entries = await fetchFeeds([
     'https://memo.yammer.jp/posts/index.xml',
     'https://qiita.com/yammerjp/feed.atom',
-    'https://basd4g.hatenablog.com/rss',
+    'https://basd4g.hatenablog.com/feed',
   ])
 
   const title = 'yammer.jp'

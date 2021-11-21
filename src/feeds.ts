@@ -16,7 +16,72 @@ async function fetchFeeds(urls: string[]): Promise<Entry[]> {
   const entries: Entry[] = entriesUnsorted.sort(
     (a: Entry, b: Entry) => (b.published?.getTime() || 0) - (a.published?.getTime() || 0)
   )
+
   return entries;
+}
+
+type RSSItem = {
+  title?: string
+  link?: string
+  description: string
+  guid: {
+    "@isPermalink": boolean
+    "#text": string
+  },
+  pubDate?: string
+  category?: string[]
+}
+
+function isUrl(str: string): boolean {
+  return /^https?:\/\/[-_.!~*\'()a-zA-Z0-9;\/?:\@&=+\$,%#\u3000-\u30FE\u4E00-\u9FA0\uFF01-\uFFE3]+$/.test(str)
+}
+
+function html2text(htmlStr: string): string {
+  console.log('htmlStr')
+  console.log(htmlStr)
+  console.log(htmlStr.replace(/<("[^"]*"|'[^']*'|[^'">])*>/g,'').slice(0, 300))
+
+ return htmlStr.replace(/<("[^"]*"|'[^']*'|[^'">])*>/g,'').slice(0, 300)
+}
+
+
+function entry2description(entry: Entry): string {
+  if (typeof entry.description?.value === 'string') {
+    if (entry.description?.type === 'html') {
+      return html2text(entry.description?.value)
+    }
+    return entry.description?.value
+  }
+  if (typeof entry.content?.value === 'string') {
+    if (entry.content?.type === 'html') {
+      return html2text(entry.content?.value)
+    }
+    return entry.content?.value
+  }
+  return ''
+}
+
+function entry2rssItem(entry: Entry): RSSItem {
+  const link = entry.links.length > 0 ? entry.links[0]?.href : undefined
+
+  const category = entry.categories?.map((c: any) => c?.label)
+
+  const guid = {
+    "@isPermalink": isUrl(entry.id),
+    "#text": entry.id,
+  }
+
+  const description = entry2description(entry)
+
+  return {
+    title: entry.title?.value,
+    link,
+    description,
+    guid,
+    pubDate: entry.publishedRaw,
+    category,
+    // enclosure
+  }
 }
 
 function createRSS(title: string, link: string, description: string, entries: Entry[]):string {
@@ -30,18 +95,7 @@ function createRSS(title: string, link: string, description: string, entries: En
         "lastBuildDate": new Date().toUTCString(),
         "docs": "http://blogs.law.harvard.edu/tech/rss",
         "generator": "https://github.com/yammerjp/rsss",
-        "item": entries.map(({id, title, links, publishedRaw, description, categories}) => ({
-          title: title?.value,
-          link: links.length > 0 ? links[0]?.href : '',
-          description: description?.value,
-          guid: {
-            "@isPermalink": /^https?:\/\/[-_.!~*\'()a-zA-Z0-9;\/?:\@&=+\$,%#\u3000-\u30FE\u4E00-\u9FA0\uFF01-\uFFE3]+$/.test(id),
-            "#text": id,
-          },
-          pubDate: publishedRaw,
-          category: categories?.map((c: any) => c?.label)
-          // enclosure
-        }))
+        item: entries.map(entry2rssItem)
       }
     }
   };
