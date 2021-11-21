@@ -37,10 +37,6 @@ function isUrl(str: string): boolean {
 }
 
 function html2text(htmlStr: string): string {
-  console.log('htmlStr')
-  console.log(htmlStr)
-  console.log(htmlStr.replace(/<("[^"]*"|'[^']*'|[^'">])*>/g,'').slice(0, 300))
-
  return htmlStr.replace(/<("[^"]*"|'[^']*'|[^'">])*>/g,'').slice(0, 300)
 }
 
