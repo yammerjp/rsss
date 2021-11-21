@@ -84,6 +84,29 @@ function entry2rssItem(entry: Entry): RSSItem {
   }
 }
 
+type JsonFeedItem = {
+  id: string,
+  url?: string,
+  title: string
+  summary: string
+  date_published?: string
+  tags?: string[]
+}
+
+function entry2jsonFeedItem(entry: Entry): JsonFeedItem {
+  const url = entry.links.length > 0 ? entry.links[0]?.href : undefined
+  const tags = entry.categories?.map((c: any) => c?.label)
+  const summary = entry2description(entry)
+  return {
+    id: entry.id,
+    title: entry.title?.value || '',
+    url,
+    tags,
+    summary,
+    date_published: entry.publishedRaw
+  }
+}
+
 function createRSS(title: string, link: string, description: string, entries: Entry[]):string {
   const rssTree = {
     "rss": {
@@ -102,6 +125,15 @@ function createRSS(title: string, link: string, description: string, entries: En
   return '<?xml version="1.0"?>\n' + stringify(rssTree)
 }
 
-export { fetchFeeds, createRSS }
+function createJsonFeed(title: string, home_page_url: string, feed_url: string, description: string, entries: Entry[]): string {
+  return JSON.stringify({
+    version: "https://jsonfeed.org/version/1.1",
+    title,
+    home_page_url,
+    feed_url,
+    description,
+    items: entries.map(entry2jsonFeedItem),
+  })
+}
 
-
+export { fetchFeeds, createRSS, createJsonFeed }
