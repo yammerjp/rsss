@@ -14,6 +14,11 @@ class Router {
     })
   }
 
+  private allowOrigins: string[] = []
+  allowOrigin(origin: string): void {
+    this.allowOrigins.push(origin)
+  }
+
   get(relativePath: string, handler: RequestHandler) {
     this.getHandlers[relativePath] = handler;
   }
@@ -39,6 +44,12 @@ class Router {
   async handle(request: Request):Promise<Response> {
     const response = await this.callRegisteredHandler(request)
     this.appendCommonHeaders(response)
+
+    const allowedOrigin = this.allowOrigins.find((o: string) => o === request.headers.get('Origin'))
+    if (typeof allowedOrigin === 'string') {
+      response.headers.append('Access-Control-Allow-Origin', allowedOrigin);
+    }
+
     return response;
   }
 }
