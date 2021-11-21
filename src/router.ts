@@ -1,16 +1,23 @@
 type RequestHandler = (request: Request) => Promise<Response>;
 
 class Router {
-  private getHandlers: {[key: string]: RequestHandler};
+  private getHandlers: {[key: string]: RequestHandler} = {};
 
-  constructor() {
-    this.getHandlers = {};
+  private commonHeaders: {[key: string]: string} = {};
+  registerCommonHeader(key: string, value: string) {
+    this.commonHeaders[key] = value;
+  }
+  private appendCommonHeaders(response: Response): void {
+    Object.keys(this.commonHeaders).forEach((key: string) => {
+      const value = this.commonHeaders[key];
+      response.headers.append(key, value)
+    })
   }
 
   get(relativePath: string, handler: RequestHandler) {
     this.getHandlers[relativePath] = handler;
   }
-  handle(request: Request):Response|Promise<Response> {
+  callRegisteredHandler(request: Request): Response|Promise<Response> {
     const path = `/${request.url.split('/').slice(3).join('/')}`
     console.log(`request: ${path}`)
 
@@ -28,8 +35,13 @@ class Router {
 
     return new Response('Method Not Allowed', { status: 405})
   }
-}
 
+  async handle(request: Request):Promise<Response> {
+    const response = await this.callRegisteredHandler(request)
+    this.appendCommonHeaders(response)
+    return response;
+  }
+}
 
 export { Router };
 export type { RequestHandler };
