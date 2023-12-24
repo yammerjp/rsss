@@ -4,8 +4,7 @@ metadata:
   name: rsss-deployment
 spec:
   selector:
-    matchLabels:
-      app: rsss
+    matchLabels: app: rsss
   replicas: 1
   template:
     metadata:
@@ -17,3 +16,6 @@ spec:
         image: ghcr.io/yammerjp/rsss
         ports:
         - containerPort: 80
+        env:
+        - name: PORT
+          value: "80"
