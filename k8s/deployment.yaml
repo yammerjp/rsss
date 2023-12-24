@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: rsss-deployment
+  name: rsss
 spec:
   selector:
     matchLabels: app: rsss
