@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rsss-deployment
+spec:
+  selector:
+    matchLabels:
+      app: rsss
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: rsss
+    spec:
+      containers:
+      - name: rsss
+        image: ghcr.io/yammerjp/rsss
+        ports:
+        - containerPort: 80
