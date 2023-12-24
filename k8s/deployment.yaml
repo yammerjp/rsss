@@ -4,7 +4,8 @@ metadata:
   name: rsss
 spec:
   selector:
-    matchLabels: app: rsss
+    matchLabels:
+      app: rsss
   replicas: 1
   template:
     metadata:
