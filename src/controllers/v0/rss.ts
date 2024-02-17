@@ -6,6 +6,7 @@ const handler: RequestHandler = async (request: Request) => {
     'https://memo.yammer.jp/posts/index.xml',
     'https://qiita.com/yammerjp/feed.atom',
     'https://basd4g.hatenablog.com/feed',
+    'https://awkblog.net/@yammerjp/rss.xml',
   ])
 
   const title = 'yammer.jp'
