@@ -12,6 +12,6 @@ cd rsss
 
 ## Development
 ```bash
-deno run --allow-net webserver.ts
+deno run --allow-net --allow-env main.ts
 ```
 
