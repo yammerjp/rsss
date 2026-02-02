@@ -1,4 +1,3 @@
-import { serve } from './deps.ts'
 import { env } from "./deps.ts"
 
 import { Router } from './src/router.ts'
@@ -16,12 +15,12 @@ router.allowOrigin('https://yammer.jp')
 router.allowOrigin('http://localhost:8080')
 router.allowOrigin('http://localhost:8081')
 
-const addr = `:${env.get("PORT", "8080")}`;
-console.log(`HTTP webserver running. Access it at: http://localhost${addr}/`);
+const port = parseInt(env.get("PORT", "8080"));
+console.log(`HTTP webserver running. Access it at: http://localhost:${port}/`);
 
 const handler = (req: Request): Promise<Response> => {
   return router.handle(req)
 }
 
-await serve(handler, { addr });
+Deno.serve({ port }, handler);
 
